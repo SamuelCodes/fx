@@ -5,7 +5,7 @@ namespace :docker do
     sh 'docker build -t fx .'
     sh 'docker stop fx; true'
     sh 'docker rm fx; true'
-    sh 'docker run -d --name fx --link postgres:postgres -e FX_DATABASE_PASSWORD="fx-password" fx'
+    sh 'docker run -d --name fx --link postgres:postgres -e SECRET_KEY_BASE=$(rake secret) -e FX_DATABASE_PASSWORD="fx-password" fx'
   end
 
   desc "dump fx tables and install them locally"

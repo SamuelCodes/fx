@@ -2,6 +2,12 @@ require 'open-uri'
 
 class QuoteSet < ApplicationRecord
   has_many :quotes, autosave: true
+  after_create_commit do
+    ActionCable.server.broadcast 'quotes', {
+      type: 'quote',
+      quotes: self.quotes
+    }
+  end
 
   def poll
     Hash.from_xml(open("http://rates.fxcm.com/RatesXML").read)['Rates']['Rate'].each do |h|

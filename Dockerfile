@@ -1,7 +1,9 @@
 FROM ruby:2.3.1-slim
 
 # Install build requirements for native gems
-RUN apt-get update -qq && apt-get install -y build-essential postgresql-client-9.4 libpq-dev
+RUN apt-get update -qq && apt-get install -y --no-install-recommends \
+      build-essential postgresql-client-9.4 libpq-dev redis-server \
+      && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Define the root of the application
 ENV RAILS_ROOT /var/www/fx
@@ -21,6 +23,8 @@ COPY . .
 # Reroute logs for docker collection
 RUN touch log/production.log
 RUN ln -sf /dev/stdout log/production.log
+
+EXPOSE 3000
 
 # Run rails server
 CMD [ "./bin/poll" ]
